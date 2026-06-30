@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tra Cứu Điểm Chuẩn Tuyển Sinh Lớp 10 (2026-2027)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts (Inter) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen text-gray-900">
+
+  <!-- Main Container -->
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    
+    <!-- Header -->
+    <header class="text-center mb-10">
+      <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">Cơ Sở Dữ Liệu Toàn Diện (7 Trang)</span>
+      <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mt-3 mb-2 tracking-tight">
+        Điểm Chuẩn Tuyển Sinh Lớp 10
+      </h1>
+      <p class="text-gray-500 text-sm md:text-base max-w-2xl mx-auto">
+        Năm học 2026 - 2027 • Hồ Chí Minh, Bình Dương & Bà Rịa - Vũng Tàu
+      </p>
+    </header>
+
+    <!-- Stats Dashboard -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-center">
+        <p class="text-xs text-gray-500 uppercase font-semibold">Tổng số trường</p>
+        <p id="total-schools" class="text-2xl font-bold text-gray-800 mt-1">0</p>
+      </div>
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-center">
+        <p class="text-xs text-gray-500 uppercase font-semibold">Điểm NV1 Cao Nhất</p>
+        <p class="text-2xl font-bold text-red-600 mt-1">24.75</p>
+      </div>
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-center">
+        <p class="text-xs text-gray-500 uppercase font-semibold">Điểm NV1 Thấp Nhất</p>
+        <p class="text-2xl font-bold text-emerald-600 mt-1">9.0</p>
+      </div>
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-center">
+        <p class="text-xs text-gray-500 uppercase font-semibold">Ngày ban hành</p>
+        <p class="text-sm font-semibold text-gray-600 mt-2">30/06/2026</p>
+      </div>
+    </div>
+
+    <!-- Search and Filter Bar -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
+      <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+        
+        <!-- Search Input -->
+        <div class="relative w-full md:w-2/3">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+            <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </span>
+          <input 
+            type="text" 
+            id="search-input"
+            class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-sm placeholder-gray-400"
+            placeholder="Tìm theo tên trường, mã trường, địa chỉ hoặc tỉnh thành..."
+          >
+        </div>
+
+        <!-- Filters -->
+        <div class="flex gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+          <button onclick="filterSchools('all')" id="btn-all" class="filter-btn px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white transition-all shadow-sm whitespace-nowrap">
+            Tất cả
+          </button>
+          <button onclick="filterSchools('hcm')" id="btn-hcm" class="filter-btn px-4 py-2 text-xs font-semibold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all whitespace-nowrap">
+            TP.HCM (01-24)
+          </button>
+          <button onclick="filterSchools('bd')" id="btn-bd" class="filter-btn px-4 py-2 text-xs font-semibold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all whitespace-nowrap">
+            Bình Dương (26)
+          </button>
+          <button onclick="filterSchools('brvt')" id="btn-brvt" class="filter-btn px-4 py-2 text-xs font-semibold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all whitespace-nowrap">
+            BR-VT (27)
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Active Count Status -->
+    <div class="mb-4 text-sm text-gray-500 px-1" id="results-count">
+      Đang hiển thị...
+    </div>
+
+    <!-- Results Display Grid -->
+    <div id="results-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Cards injected here via JS -->
+    </div>
+
+    <!-- Load More Button -->
+    <div id="load-more-container" class="flex justify-center mt-10 hidden">
+      <button id="load-more-btn" class="px-6 py-3 bg-blue-50 text-blue-700 font-semibold text-sm rounded-xl hover:bg-blue-100 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        Hiển thị thêm kết quả
+      </button>
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden text-center py-16">
+      <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <h3 class="text-lg font-medium text-gray-900">Không tìm thấy trường học nào</h3>
+      <p class="text-sm text-gray-500 mt-1">Vui lòng kiểm tra lại từ khóa hoặc chuyển đổi bộ lọc khu vực.</p>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-gray-200 mt-16 py-8 text-center text-xs text-gray-500">
+    <p>Dữ liệu tổng hợp từ 7 trang văn bản tuyển sinh lớp 10 chính thức năm học 2026-2027.</p>
+  </footer>
+
+  <script>
+    // COMPLETE DATASET FROM ALL 7 PAGES OF THE DOCUMENT
+    const schoolsData = [
+      // Page 1
+      { code: "01FA01", name: "THPT Trưng Vương", ward: "Phường Sài Gòn", nv1: 21.75, nv2: 22, nv3: 23 },
+      { code: "01FA02", name: "THPT Bùi Thị Xuân", ward: "Phường Bến Thành", nv1: 24.25, nv2: 24.75, nv3: 25 },
+      { code: "01FB01", name: "THPT Ten Lơ Man", ward: "Phường Bến Thành", nv1: 20.5, nv2: 21.25, nv3: 21.5 },
+      { code: "01HA04", name: "THPT Năng khiếu TDTT", ward: "Phường Tân Định", nv1: 14, nv2: 15, nv3: 16 },
+      { code: "01HA99", name: "THCS THPT Trần Đại Nghĩa", ward: "Phường Sài Gòn", nv1: 24, nv2: 24.5, nv3: 24.75 },
+      { code: "01HB05", name: "THPT Lương Thế Vinh", ward: "Phường Cầu Ông Lãnh", nv1: 22.75, nv2: 23, nv3: 23.5 },
+      { code: "02FA01", name: "THPT Giồng Ông Tố", ward: "Phường Bình Trưng", nv1: 18.75, nv2: 19.25, nv3: 19.75 },
+      { code: "02HA01", name: "THPT Thủ Thiêm", ward: "Phường Bình Trưng", nv1: 14.25, nv2: 15.25, nv3: 16 },
+      { code: "03FA01", name: "THPT Lê Quý Đôn", ward: "Phường Xuân Hòa", nv1: 23.75, nv2: 24.75, nv3: 25 },
+      { code: "03FA02", name: "THPT Nguyễn Thị Minh Khai", ward: "Phường Xuân Hòa", nv1: 24.5, nv2: 25, nv3: 25.25 },
+      { code: "03FA03", name: "THPT Lê Thị Hồng Gấm", ward: "Phường Xuân Hòa", nv1: 14.25, nv2: 15, nv3: 16 },
+      { code: "03FB02", name: "THPT Marie Curie", ward: "Phường Xuân Hòa", nv1: 22.25, nv2: 22.25, nv3: 22.75 },
+      { code: "03HB12", name: "THPT Nguyễn Thị Diệu", ward: "Phường Xuân Hòa", nv1: 15.75, nv2: 16.25, nv3: 17.25 },
+      { code: "04FA01", name: "THPT Nguyễn Trãi", ward: "Phường Xóm Chiếu", nv1: 15.25, nv2: 15.75, nv3: 16 },
+      { code: "04HA01", name: "THPT Nguyễn Hữu Thọ", ward: "Phường Xóm Chiếu", nv1: 18.25, nv2: 18.5, nv3: 19 },
+      { code: "05EA02", name: "Trung học thực hành Sài Gòn", ward: "Phường Chợ Quán", nv1: 23.5, nv2: 24, nv3: 24.25 },
+      { code: "05FA02", name: "THPT Hùng Vương", ward: "Phường Chợ Lớn", nv1: 21, nv2: 21.25, nv3: 21.5 },
+      { code: "05FA04", name: "Trung học thực hành ĐHSP", ward: "Phường Chợ Quán", nv1: 24.5, nv2: 24.75, nv3: 25 },
+      { code: "05FB01", name: "THPT Trần Khai Nguyên", ward: "Phường An Đông", nv1: 23, nv2: 24, nv3: 24.25 },
+      { code: "05HB01", name: "THPT Trần Hữu Trang", ward: "Phường Chợ Lớn", nv1: 14, nv2: 15, nv3: 15.75 },
+      { code: "06FA01", name: "THPT Mạc Đĩnh Chi", ward: "Phường Phú Lâm", nv1: 24.25, nv2: 24.5, nv3: 24.75 },
+      { code: "06FA02", name: "THPT Bình Phú", ward: "Phường Bình Phú", nv1: 22.5, nv2: 23, nv3: 23.25 },
+      { code: "06FA03", name: "THPT Nguyễn Tất Thành", ward: "Phường Bình Phú", nv1: 19.75, nv2: 20.5, nv3: 20.75 },
+      { code: "06FA04", name: "THPT Phạm Phú Thứ", ward: "Phường Bình Tiên", nv1: 17, nv2: 17.5, nv3: 18 },
+
+      // Page 2
+      { code: "07FA01", name: "THPT Lê Thánh Tôn", ward: "Phường Tân Hưng", nv1: 20, nv2: 20.75, nv3: 21.5 },
+      { code: "07FA02", name: "THPT Tân Phong", ward: "Phường Tân Hưng", nv1: 15.75, nv2: 16.5, nv3: 17 },
+      { code: "07HA01", name: "THPT Ngô Quyền", ward: "Phường Tân Mỹ", nv1: 21.25, nv2: 21.25, nv3: 21.5 },
+      { code: "07HB01", name: "THPT Nam Sài Gòn", ward: "Phường Tân Mỹ", nv1: 22.25, nv2: 23, nv3: 23.75 },
+      { code: "08FA01", name: "THPT Lương Văn Can", ward: "Phường Chánh Hưng", nv1: 15.75, nv2: 16.5, nv3: 17 },
+      { code: "08FA02", name: "THPT Ngô Gia Tự", ward: "Phường Phú Định", nv1: 13.25, nv2: 14.25, nv3: 15 },
+      { code: "08FA03", name: "THPT Tạ Quang Bửu", ward: "Phường Bình Đông", nv1: 18, nv2: 18.75, nv3: 19.5 },
+      { code: "08FA04", name: "THPT Nguyễn Văn Linh", ward: "Phường Bình Đông", nv1: 11.75, nv2: 12.75, nv3: 13.75 },
+      { code: "08FA05", name: "THPT Võ Văn Kiệt", ward: "Phường Phú Định", nv1: 18, nv2: 18.5, nv3: 19 },
+      { code: "08HA01", name: "Phổ thông NK TDTT Nguyễn Thị Định", ward: "Phường Phú Định", nv1: 14.5, nv2: 15.5, nv3: 16.25 },
+      { code: "09FA01", name: "THPT Nguyễn Huệ", ward: "Phường Long Bình", nv1: 18.5, nv2: 19.5, nv3: 19.75 },
+      { code: "09FA02", name: "THPT Phước Long", ward: "Phường Phước Long", nv1: 19.25, nv2: 19.5, nv3: 19.75 },
+      { code: "09FA03", name: "THPT Long Trường", ward: "Phường Long Trường", nv1: 12.5, nv2: 13.5, nv3: 14.5 },
+      { code: "09FA04", name: "THPT Nguyễn Văn Tăng", ward: "Phường Long Bình", nv1: 12, nv2: 12.75, nv3: 13.75 },
+      { code: "09FA05", name: "THPT Dương Văn Thì", ward: "Phường Tăng Nhơn Phú", nv1: 16.5, nv2: 17.5, nv3: 18.5 },
+      { code: "10FA01", name: "THPT Nguyễn Khuyến", ward: "Phường Hòa Hưng", nv1: 20.75, nv2: 21.75, nv3: 22 },
+      { code: "10FA02", name: "THPT Nguyễn Du", ward: "Phường Hòa Hưng", nv1: 21.75, nv2: 22.25, nv3: 23 },
+      { code: "10FB01", name: "THPT Nguyễn An Ninh", ward: "Phường Vườn Lài", nv1: 16.25, nv2: 17.25, nv3: 17.75 },
+      { code: "10HB01", name: "THPT Diên Hồng", ward: "Phường Diên Hồng", nv1: 15, nv2: 16, nv3: 17 },
+      { code: "10HB43", name: "THPT Sương Nguyệt Anh", ward: "Phường Vườn Lài", nv1: 13.5, nv2: 14.5, nv3: 15.5 },
+      { code: "11FA01", name: "THPT Nguyễn Hiền", ward: "Phường Bình Thới", nv1: 19.75, nv2: 20.75, nv3: 21.75 },
+      { code: "11FA02", name: "THPT Trần Quang Khải", ward: "Phường Hòa Bình", nv1: 17.75, nv2: 18.5, nv3: 18.75 },
+      { code: "11FB01", name: "THPT Nam Kỳ Khởi Nghĩa", ward: "Phường Minh Phụng", nv1: 16.5, nv2: 17.5, nv3: 18.25 },
+      { code: "12FA01", name: "THPT Võ Trường Toản", ward: "Phường Tân Thới Hiệp", nv1: 22.5, nv2: 23.5, nv3: 23.75 },
+      { code: "12FA02", name: "THPT Trường Chinh", ward: "Phường Đông Hưng Thuận", nv1: 19.25, nv2: 19.75, nv3: 20.75 },
+      { code: "12FA03", name: "THPT Phan Văn Hớn", ward: "Phường Đông Hưng Thuận", nv1: 16, nv2: 17, nv3: 17.5 },
+      { code: "12FA04", name: "TiH, THCS và THPT Lê Thị Riêng", ward: "Phường Thới An", nv1: 16.25, nv2: 17.25, nv3: 18 },
+      { code: "12HA01", name: "THPT Thạnh Lộc", ward: "Phường An Phú Đông", nv1: 17.5, nv2: 18, nv3: 18.75 },
+      { code: "13FA01", name: "THPT Thanh Đa", ward: "Phường Bình Thạnh", nv1: 16.25, nv2: 16.75, nv3: 17.25 },
+
+      // Page 3
+      { code: "13FA02", name: "THPT Võ Thị Sáu", ward: "Phường Gia Định", nv1: 21, nv2: 21.5, nv3: 22 },
+      { code: "13FA03", name: "THPT Gia Định", ward: "Phường Thạnh Mỹ Tây", nv1: 23.5, nv2: 23.5, nv3: 23.75 },
+      { code: "13FA04", name: "THPT Phan Đăng Lưu", ward: "Phường Bình Lợi Trung", nv1: 17.5, nv2: 17.75, nv3: 17.75 },
+      { code: "13FA05", name: "THPT Trần Văn Giàu", ward: "Phường Bình Lợi Trung", nv1: 18, nv2: 18.25, nv3: 19 },
+      { code: "13FB01", name: "THPT Hoàng Hoa Thám", ward: "Phường Gia Định", nv1: 20.75, nv2: 21.25, nv3: 22 },
+      { code: "14FA01", name: "THPT Gò Vấp", ward: "Phường Hạnh Thông", nv1: 18, nv2: 18.75, nv3: 19.75 },
+      { code: "14FA02", name: "THPT Nguyễn Công Trứ", ward: "Phường Thống Tây Hội", nv1: 22, nv2: 22.25, nv3: 22.5 },
+      { code: "14FA03", name: "THPT Trần Hưng Đạo", ward: "Phường An Nhơn", nv1: 22.25, nv2: 22.25, nv3: 22.5 },
+      { code: "14FB03", name: "THPT Nguyễn Trung Trực", ward: "Phường An Hội Đông", nv1: 19.75, nv2: 20.25, nv3: 21 },
+      { code: "15FA01", name: "THPT Phú Nhuận", ward: "Phường Đức Nhuận", nv1: 24, nv2: 24.75, nv3: 25 },
+      { code: "15FB02", name: "THPT Hàn Thuyên", ward: "Phường Phú Nhuận", nv1: 16.25, nv2: 17.25, nv3: 18 },
+      { code: "16FA01", name: "THPT Tân Bình", ward: "Phường Tân Sơn Nhì", nv1: 21.5, nv2: 21.75, nv3: 22.5 },
+      { code: "16FA18", name: "THPT Nguyễn Chí Thanh", ward: "Phường Tân Bình", nv1: 20.25, nv2: 20.75, nv3: 21.75 },
+      { code: "16FA19", name: "THPT Trần Phú", ward: "Phường Phú Thọ Hòa", nv1: 24.25, nv2: 24.5, nv3: 24.75 },
+      { code: "16FA20", name: "THPT Nguyễn Thượng Hiền", ward: "Phường Tân Sơn Nhất", nv1: 24.75, nv2: 25.25, nv3: 25.5 },
+      { code: "16FB21", name: "THPT Nguyễn Thái Bình", ward: "Phường Tân Hòa", nv1: 18.75, nv2: 19.75, nv3: 19.75 },
+      { code: "17FA01", name: "THPT Nguyễn Hữu Huân", ward: "Phường Thủ Đức", nv1: 24.25, nv2: 24.75, nv3: 25 },
+      { code: "17FA02", name: "THPT Thủ Đức", ward: "Phường Thủ Đức", nv1: 22.75, nv2: 23.5, nv3: 24.5 },
+      { code: "17FA03", name: "THPT Tam Phú", ward: "Phường Tam Bình", nv1: 20, nv2: 20.5, nv3: 21 },
+      { code: "17FA04", name: "THPT Hiệp Bình", ward: "Phường Hiệp Bình", nv1: 16.75, nv2: 17.25, nv3: 17.5 },
+      { code: "17FA05", name: "THPT Đào Sơn Tây", ward: "Phường Linh Xuân", nv1: 14.75, nv2: 15.5, nv3: 16.5 },
+      { code: "17FA06", name: "THPT Linh Trung", ward: "Phường Linh Xuân", nv1: 16.25, nv2: 17, nv3: 17.25 },
+      { code: "17FA07", name: "THPT Bình Chiểu", ward: "Phường Tam Bình", nv1: 15.75, nv2: 16.25, nv3: 17 },
+      { code: "18FA01", name: "THPT Bình Chánh", ward: "Xã Bình Chánh", nv1: 14.25, nv2: 14.5, nv3: 15.5 },
+      { code: "18FA04", name: "THPT Tân Túc", ward: "Xã Tân Nhựt", nv1: 12.75, nv2: 13.75, nv3: 14.75 },
+      { code: "18FA05", name: "THPT Vĩnh Lộc B", ward: "Xã Tân Vĩnh Lộc", nv1: 16.25, nv2: 17.25, nv3: 18.25 },
+      { code: "18FA06", name: "Phổ thông NK TDTT Bình Chánh", ward: "Xã Bình Lợi", nv1: 13.5, nv2: 14.5, nv3: 15.25 },
+      { code: "18FA07", name: "THPT Phong Phú", ward: "Xã Bình Hưng", nv1: 10.75, nv2: 11.5, nv3: 12.5 },
+      { code: "18HA02", name: "THPT Lê Minh Xuân", ward: "Xã Bình Lợi", nv1: 14.25, nv2: 15.25, nv3: 16 },
+
+      // Page 4
+      { code: "18HA03", name: "THPT Đa Phước", ward: "Xã Hưng Long", nv1: 10.5, nv2: 10.5, nv3: 10.5 },
+      { code: "19FA01", name: "THPT Bình Khánh", ward: "Xã Bình Khánh", nv1: 10, nv2: 10, nv3: 10 },
+      { code: "19FA02", name: "THPT Cần Thạnh", ward: "Xã Cần Giờ", nv1: 9, nv2: 9, nv3: 9 },
+      { code: "19FA03", name: "THPT An Nghĩa", ward: "Xã Bình Khánh", nv1: 10, nv2: 10, nv3: 10 },
+      { code: "20FA01", name: "THPT Củ Chi", ward: "Xã Tân An Hội", nv1: 16, nv2: 16.5, nv3: 17.5 },
+      { code: "20FA02", name: "THPT Quang Trung", ward: "Xã Thái Mỹ", nv1: 12.25, nv2: 12.75, nv3: 13.75 },
+      { code: "20FA03", name: "THPT An Nhơn Tây", ward: "Xã An Nhơn Tây", nv1: 11.5, nv2: 12.25, nv3: 13 },
+      { code: "20FA04", name: "THPT Trung Phú", ward: "Xã Phú Hòa Đông", nv1: 16.25, nv2: 17, nv3: 18 },
+      { code: "20FA05", name: "THPT Trung Lập", ward: "Xã Thái Mỹ", nv1: 10.5, nv2: 11.5, nv3: 11.75 },
+      { code: "20FA06", name: "THPT Phú Hòa", ward: "Xã Phú Hòa Đông", nv1: 13.5, nv2: 14.25, nv3: 14.5 },
+      { code: "20FA07", name: "THPT Tân Thông Hội", ward: "Xã Củ Chi", nv1: 14.75, nv2: 15.25, nv3: 16 },
+      { code: "21FA01", name: "THPT Nguyễn Hữu Cầu", ward: "Xã Bà Điểm", nv1: 24, nv2: 24.25, nv3: 24.5 },
+      { code: "21FA02", name: "THPT Lý Thường Kiệt", ward: "Xã Đông Thạnh", nv1: 20.75, nv2: 21.25, nv3: 21.5 },
+      { code: "21FA03", name: "THPT Bà Điểm", ward: "Xã Bà Điểm", nv1: 20.5, nv2: 21.25, nv3: 21.5 },
+      { code: "21FA04", name: "THPT Nguyễn Văn Cừ", ward: "Xã Bà Điểm", nv1: 15.5, nv2: 16.5, nv3: 17.25 },
+      { code: "21FA05", name: "THPT Nguyễn Hữu Tiến", ward: "Xã Đông Thạnh", nv1: 19, nv2: 20, nv3: 21 },
+      { code: "21FA06", name: "THPT Phạm Văn Sáng", ward: "Xã Xuân Thới Sơn", nv1: 17.5, nv2: 18.5, nv3: 18.75 },
+      { code: "21FA07", name: "THPT Hồ Thị Bi", ward: "Xã Hóc Môn", nv1: 17.25, nv2: 18, nv3: 18.5 },
+      { code: "22FA01", name: "THPT Long Thới", ward: "Xã Hiệp Phước", nv1: 13.25, nv2: 14, nv3: 14.75 },
+      { code: "22FA02", name: "THPT Phước Kiển", ward: "Xã Nhà Bè", nv1: 11.75, nv2: 12.75, nv3: 13.25 },
+      { code: "22FA03", name: "THPT Dương Văn Dương", ward: "Xã Nhà Bè", nv1: 13.25, nv2: 13.75, nv3: 14 },
+      { code: "23FA01", name: "THPT Tây Thạnh", ward: "Phường Tây Thạnh", nv1: 23.25, nv2: 24.25, nv3: 24.5 },
+      { code: "23FA02", name: "THPT Lê Trọng Tấn", ward: "Phường Tân Sơn Nhì", nv1: 21.75, nv2: 22.5, nv3: 22.75 },
+      { code: "23FA03", name: "THPT Thoại Ngọc Hầu", ward: "Phường Tân Phú", nv1: 16.25, nv2: 17.25, nv3: 18.25 },
+      { code: "24FA01", name: "THPT Vĩnh Lộc", ward: "Phường Bình Tân", nv1: 19, nv2: 19.75, nv3: 20.25 },
+      { code: "24FA02", name: "THPT Nguyễn Hữu Cảnh", ward: "Phường Bình Trị Đông", nv1: 21, nv2: 21.75, nv3: 22 },
+      { code: "24FA03", name: "THPT Bình Hưng Hòa", ward: "Phường Bình Hưng Hòa", nv1: 19.75, nv2: 20.75, nv3: 21 },
+      { code: "24FA04", name: "THPT Bình Tân", ward: "Phường Bình Tân", nv1: 16, nv2: 16.75, nv3: 17.5 },
+      { code: "24FA05", name: "THPT Hoàng Thế Thiện", ward: "Phường An Lạc", nv1: 15.5, nv2: 16.5, nv3: 17.25 },
+
+      // Page 5
+      { code: "24HA01", name: "THPT An Lạc", ward: "Phường An Lạc", nv1: 17.25, nv2: 18, nv3: 19 },
+      { code: "26FA01", name: "THPT Lý Thái Tổ", ward: "Phường An Phú", nv1: 17.25, nv2: 17.75, nv3: 18 },
+      { code: "26FA03", name: "THPT Lê Lợi", ward: "Xã Bắc Tân Uyên", nv1: 13.25, nv2: 14.25, nv3: 15 },
+      { code: "26FA04", name: "THPT Tân Bình Bình Dương", ward: "Phường Vĩnh Tân", nv1: 13.5, nv2: 14.25, nv3: 15.25 },
+      { code: "26FA05", name: "THPT Dĩ An", ward: "Phường Dĩ An", nv1: 23.25, nv2: 24, nv3: 24.25 },
+      { code: "26FA06", name: "THPT Võ Minh Đức", ward: "Phường Thủ Dầu Một", nv1: 20, nv2: 20, nv3: 20.75 },
+      { code: "26FA07", name: "THCS THPT Minh Hòa", ward: "Xã Minh Thạnh", nv1: 10.75, nv2: 10.75, nv3: 11.25 },
+      { code: "26FA08", name: "THPT Bình An", ward: "Phường Đông Hòa", nv1: 19, nv2: 19.5, nv3: 20 },
+      { code: "26FA10", name: "THPT Nguyễn Đình Chiểu", ward: "Phường Phú Lợi", nv1: 16.75, nv2: 17.75, nv3: 18.25 },
+      { code: "26FA11", name: "THPT Trịnh Hoài Đức", ward: "Phường Thuận An", nv1: 23.25, nv2: 24, nv3: 24.25 },
+      { code: "26FA12", name: "THPT Nguyễn Trãi - Bình Dương", ward: "Phường Lái Thiêu", nv1: 19.75, nv2: 20, nv3: 20.75 },
+      { code: "26FA13", name: "THPT Nguyễn An Ninh - Bình Dương", ward: "Phường Dĩ An", nv1: 15.75, nv2: 16.25, nv3: 16.5 },
+      { code: "26FA14", name: "THPT Huỳnh Văn Nghệ", ward: "Phường Tân Uyên", nv1: 15, nv2: 15.75, nv3: 16.5 },
+      { code: "26FA15", name: "THPT Phước Vĩnh", ward: "Xã Phú Giáo", nv1: 11.5, nv2: 12.25, nv3: 13 },
+      { code: "26FA16", name: "THPT Bến Cát", ward: "Phường Bến Cát", nv1: 18.5, nv2: 18.75, nv3: 19 },
+      { code: "26FA17", name: "THPT Dầu Tiếng", ward: "Xã Dầu Tiếng", nv1: 12.5, nv2: 13.25, nv3: 13.5 },
+      { code: "26FA18", name: "THPT Bình Phú - Bình Dương", ward: "Phường Chánh Hiệp", nv1: 15.5, nv2: 16.5, nv3: 17 },
+      { code: "26FA19", name: "THPT Trần Văn Ơn", ward: "Phường Thuận Giao", nv1: 16.75, nv2: 17.75, nv3: 18.25 },
+      { code: "26FA20", name: "THCS và THPT Tây Sơn", ward: "Xã An Long", nv1: 10.25, nv2: 10.5, nv3: 10.75 },
+      { code: "26FA21", name: "THCS và THPT Nguyễn Huệ", ward: "Xã Phước Thành", nv1: 9, nv2: 9, nv3: 9 },
+      { code: "26FA22", name: "THPT Tây Nam", ward: "Phường Phú An", nv1: 14.5, nv2: 15.5, nv3: 15.75 },
+      { code: "26FA23", name: "THPT Tân Phước Khánh", ward: "Phường Tân Khánh", nv1: 19.25, nv2: 19.5, nv3: 19.75 },
+      { code: "26FA24", name: "THPT Thái Hòa", ward: "Phường Tân Khánh", nv1: 15.5, nv2: 16.25, nv3: 17.25 },
+      { code: "26FA25", name: "THPT An Mỹ", ward: "Phường Bình Dương", nv1: 18.5, nv2: 18.75, nv3: 19 },
+      { code: "26FA26", name: "THPT Phước Hòa", ward: "Xã Phước Hòa", nv1: 11.75, nv2: 12.5, nv3: 13.5 },
+      { code: "26FA27", name: "THPT Bàu Bàng", ward: "Xã Bàu Bàng", nv1: 15.25, nv2: 15.75, nv3: 16.25 },
+      { code: "26FA28", name: "THPT Long Hòa", ward: "Xã Long Hòa", nv1: 12, nv2: 12.75, nv3: 13.5 },
+      { code: "26FA29", name: "THPT Nguyễn Thị Minh Khai - BD", ward: "Phường Tân Đông Hiệp", nv1: 20.25, nv2: 21.25, nv3: 22.25 },
+      { code: "26FA30", name: "THPT Thường Tân", ward: "Xã Thường Tân", nv1: 12, nv2: 12.75, nv3: 13.75 },
+
+      // Page 6
+      { code: "26FA31", name: "THPT Thanh Tuyền", ward: "Phường Tây Nam", nv1: 13.5, nv2: 14, nv3: 14.75 },
+      { code: "26FA32", name: "THPT Hà Huy Tập", ward: "Phường Dĩ An", nv1: 16.5, nv2: 17, nv3: 17.75 },
+      { code: "27FA02", name: "THPT Vũng Tàu", ward: "Phường Tam Thắng", nv1: 21.75, nv2: 22, nv3: 22.25 },
+      { code: "27FA03", name: "THPT Châu Thành", ward: "Phường Bà Rịa", nv1: 18.5, nv2: 19, nv3: 19.25 },
+      { code: "27FA04", name: "THPT Trần Phú - BRVT", ward: "Xã Kim Long", nv1: 9, nv2: 9, nv3: 9 },
+      { code: "27FA05", name: "THPT Xuyên Mộc", ward: "Xã Hồ Tràm", nv1: 12.25, nv2: 12.5, nv3: 12.75 },
+      { code: "27FA06", name: "THPT Phú Mỹ", ward: "Phường Phú Mỹ", nv1: 11.5, nv2: 11.75, nv3: 12 },
+      { code: "27FA07", name: "THPT Trần Hưng Đạo - BRVT", ward: "Phường Tân Hải", nv1: 11.5, nv2: 11.75, nv3: 12 },
+      { code: "27FA08", name: "THPT Hắc Dịch", ward: "Phường Tân Thành", nv1: 9, nv2: 9, nv3: 9 },
+      { code: "27FA09", name: "THPT Trần Văn Quan", ward: "Xã Long Điền", nv1: 10.75, nv2: 11, nv3: 11.25 },
+      { code: "27FA10", name: "THPT Võ Thị Sáu - BRVT", ward: "Xã Đất Đỏ", nv1: 11, nv2: 11.25, nv3: 11.5 },
+      { code: "27FA11", name: "THPT Hòa Hội", ward: "Xã Hòa Hội", nv1: 10.25, nv2: 10.25, nv3: 10.25 },
+      { code: "27FA12", name: "THPT Nguyễn Bỉnh Khiêm", ward: "Phường Tam Long", nv1: 10.25, nv2: 10.25, nv3: 10.25 },
+      { code: "27FA13", name: "THPT Nguyễn Trãi - BRVT", ward: "Xã Ngãi Giao", nv1: 10, nv2: 10, nv3: 10 },
+      { code: "27FA14", name: "THPT Phước Bửu", ward: "Xã Hồ Tràm", nv1: 9, nv2: 9, nv3: 9 },
+      { code: "27FA15", name: "THPT Long Hải - Phước Tỉnh", ward: "Xã Long Hải", nv1: 10.5, nv2: 10.75, nv3: 10.75 },
+      { code: "27FA16", name: "THPT Nguyễn Văn Cừ - BRVT", ward: "Xã Xuân Sơn", nv1: 9, nv2: 9, nv3: 9 },
+      { code: "27FA17", name: "THPT Minh Đạm", ward: "Xã Long Hải", nv1: 11.5, nv2: 11.75, nv3: 12 },
+      { code: "27FA18", name: "THPT Nguyễn Khuyến - BRVT", ward: "Phường Phước Thắng", nv1: 15.75, nv2: 16, nv3: 16.5 },
+      { code: "27FA19", name: "THPT Nguyễn Huệ - BRVT", ward: "Phường Rạch Dừa", nv1: 19.25, nv2: 19.5, nv3: 19.75 },
+      { code: "27FA20", name: "THPT Đinh Tiên Hoàng", ward: "Phường Vũng Tàu", nv1: 17.25, nv2: 17.25, nv3: 17.75 },
+      { code: "27FA21", name: "THPT Trần Nguyên Hãn", ward: "Phường Tam Thắng", nv1: 16.5, nv2: 17.25, nv3: 17.5 },
+      { code: "27FA22", name: "THPT Ngô Quyền - BRVT", ward: "Xã Nghĩa Thành", nv1: 10, nv2: 10, nv3: 10 },
+      { code: "27FA23", name: "THPT Hòa Bình", ward: "Xã Hòa Hội", nv1: 9, nv2: 9, nv3: 9 },
+      { code: "27FA25", name: "THPT Trần Quang Khải - BRVT", ward: "Xã Long Hải", nv1: 12.75, nv2: 13, nv3: 13.25 },
+      { code: "27FA26", name: "THPT Dương Bạch Mai", ward: "Xã Phước Hải", nv1: 9, nv2: 9, nv3: 9 },
+      { code: "27FA27", name: "THPT Bà Rịa", ward: "Phường Bà Rịa", nv1: 14, nv2: 14.5, nv3: 14.75 },
+      { code: "27FA28", name: "THPT Bưng Riềng", ward: "Xã Xuyên Mộc", nv1: 9, nv2: 9, nv3: 9 },
+      { code: "27FA30", name: "THPT Nguyễn Du - BRVT", ward: "Xã Ngãi Giao", nv1: 15.25, nv2: 15.75, nv3: 16 },
+
+      // Page 7
+      { code: "27FA33", name: "THPT Võ Nguyên Giáp", ward: "Phường Phú Mỹ", nv1: 9, nv2: 9, nv3: 9 }
+    ];
+
+    let activeFilter = 'all';
+    let searchQuery = '';
+    const itemsPerPage = 30;
+    let visibleCount = itemsPerPage;
+
+    // Initialize Page
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById('total-schools').innerText = schoolsData.length;
+      renderSchools();
+
+      // Search event listener
+      document.getElementById('search-input').addEventListener('input', (e) => {
+        searchQuery = e.target.value.toLowerCase().trim();
+        visibleCount = itemsPerPage; // Reset page limit on new search query
+        renderSchools();
+      });
+
+      // Load more button action
+      document.getElementById('load-more-btn').addEventListener('click', () => {
+        visibleCount += itemsPerPage;
+        renderSchools();
+      });
+    });
+
+    // Handle button styles for active region filters
+    function updateActiveFilterButton(selected) {
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.className = "filter-btn px-4 py-2 text-xs font-semibold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all whitespace-nowrap";
+      });
+      const activeBtn = document.getElementById(`btn-${selected}`);
+      if(activeBtn) {
+        activeBtn.className = "filter-btn px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white transition-all shadow-sm whitespace-nowrap";
+      }
+    }
+
+    // Filter control function
+    function filterSchools(filterType) {
+      activeFilter = filterType;
+      visibleCount = itemsPerPage; // Reset dynamic page limit
+      updateActiveFilterButton(filterType);
+      renderSchools();
+    }
+
+    // Convert Vietnamese accents/diacritics to basic letters
+    function removeAccents(str) {
+      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    // Dynamic Render Engine
+    function renderSchools() {
+      const resultsGrid = document.getElementById('results-grid');
+      const emptyState = document.getElementById('empty-state');
+      const loadMoreContainer = document.getElementById('load-more-container');
+      const countLabel = document.getElementById('results-count');
+      
+      resultsGrid.innerHTML = '';
+
+      // Perform matching/filtering
+      const filtered = schoolsData.filter(school => {
+        const cleanName = removeAccents(school.name);
+        const cleanWard = removeAccents(school.ward);
+        const cleanQuery = removeAccents(searchQuery);
+        
+        const matchesText = cleanName.includes(cleanQuery) || 
+                            cleanWard.includes(cleanQuery) || 
+                            school.code.toLowerCase().includes(searchQuery);
+
+        // Region prefix matches
+        const prefix = school.code.substring(0, 2);
+        if (activeFilter === 'hcm') {
+          return matchesText && parseInt(prefix) <= 24;
+        } else if (activeFilter === 'bd') {
+          return matchesText && prefix === '26';
+        } else if (activeFilter === 'brvt') {
+          return matchesText && prefix === '27';
+        }
+        return matchesText;
+      });
+
+      // Show empty state if no matching schools found
+      if (filtered.length === 0) {
+        emptyState.classList.remove('hidden');
+        resultsGrid.classList.add('hidden');
+        loadMoreContainer.classList.add('hidden');
+        countLabel.innerText = "Không tìm thấy kết quả nào.";
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      resultsGrid.classList.remove('hidden');
+
+      // Pagination slice
+      const displayed = filtered.slice(0, visibleCount);
+      
+      // Update result count label
+      countLabel.innerText = `Đang hiển thị ${displayed.length} trên ${filtered.length} kết quả phù hợp.`;
+
+      // Handle visibility of the Load More button
+      if (filtered.length > visibleCount) {
+        loadMoreContainer.classList.remove('hidden');
+      } else {
+        loadMoreContainer.classList.add('hidden');
+      }
+
+      // Populate Cards
+      displayed.forEach(school => {
+        const card = document.createElement('div');
+        card.className = "bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all flex flex-col justify-between";
+        
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">${school.code}</span>
+              <span class="text-[11px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-medium truncate max-w-[180px]">${school.ward}</span>
+            </div>
+            <h3 class="text-base font-bold text-gray-800 mb-4 leading-tight">${school.name}</h3>
+          </div>
+
+          <!-- Points Breakdown -->
+          <div class="grid grid-cols-3 gap-2 pt-4 border-t border-gray-100 text-center">
+            <div class="bg-blue-50/50 p-2 rounded-lg">
+              <p class="text-[10px] text-blue-500 uppercase font-bold tracking-wider">NV 1</p>
+              <p class="text-base font-extrabold text-blue-800 mt-0.5">${school.nv1}</p>
+            </div>
+            <div class="bg-indigo-50/50 p-2 rounded-lg">
+              <p class="text-[10px] text-indigo-500 uppercase font-bold tracking-wider">NV 2</p>
+              <p class="text-base font-extrabold text-indigo-800 mt-0.5">${school.nv2}</p>
+            </div>
+            <div class="bg-purple-50/50 p-2 rounded-lg">
+              <p class="text-[10px] text-purple-500 uppercase font-bold tracking-wider">NV 3</p>
+              <p class="text-base font-extrabold text-purple-800 mt-0.5">${school.nv3}</p>
+            </div>
+          </div>
+        `;
+        resultsGrid.appendChild(card);
+      });
+    }
+  </script>
+</body>
+</html>
